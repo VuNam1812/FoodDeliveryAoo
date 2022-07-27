@@ -3,14 +3,17 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { HorizontalFoodItem, VerticalFoodItem } from '../../components';
 import { COLORS, dummyData, FONTS, icons, SIZES } from '../../constants';
+import FilterSearch from './FilterSearch';
 
 const Section = ({ title, onPress, children }) => {
-  return <View style={{ paddingHorizontal: SIZES.padding, width: SIZES.width, marginTop: SIZES.padding }}>
-    <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
+  return <View style={{ width: SIZES.width, marginTop: SIZES.padding }}>
+    <View style={{ paddingHorizontal: SIZES.padding, flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
       <Text style={{ fontWeight: 'bold', ...FONTS.h3 }}>{title}</Text>
       <Text style={{ fontWeight: 'bold', color: COLORS.primary, ...FONTS.body3 }}>Show all</Text>
     </View>
-    {children}
+    <View >
+      {children}
+    </View>
   </View>
 }
 
@@ -21,6 +24,8 @@ const Home = () => {
   const [menuList, setMenuList] = React.useState([]);
   const [popularList, setPopularList] = React.useState([]);
   const [recommendedList, setRecommendedList] = React.useState([]);
+
+  const [showFilter, setShowFilter] = React.useState(false);
 
   React.useEffect(() => {
     handleChangeMenu(categoryId, menuType);
@@ -60,7 +65,7 @@ const Home = () => {
       }}>
         <Image source={icons.search} style={{ width: 20, height: 20, tintColor: COLORS.black }} />
         <TextInput placeholder='Search food' style={{ flex: 1, paddingHorizontal: SIZES.base }} />
-        <TouchableOpacity >
+        <TouchableOpacity onPress={() => setShowFilter(true)}>
           <Image source={icons.filter} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
       </View>
@@ -128,6 +133,8 @@ const Home = () => {
         data={popularList}
         horizontal
         pagingEnabled
+        style={{ paddingHorizontal: SIZES.padding, marginTop: SIZES.base }}
+        contentContainerStyle={{ paddingRight: SIZES.padding }}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
@@ -137,7 +144,7 @@ const Home = () => {
               backgroundColor: COLORS.lightGray2,
               marginTop: SIZES.padding / 2,
               width: SIZES.width * 0.8,
-              marginRight: index !== popularList.length - 1 ? SIZES.padding : 0,
+              marginRight: SIZES.padding,
             }} imageStyle={{ height: 110, width: 110 }}
           />
         }}
@@ -154,6 +161,8 @@ const Home = () => {
       <FlatList
         data={recommendedList}
         horizontal
+        style={{ paddingHorizontal: SIZES.padding, marginTop: SIZES.base }}
+        contentContainerStyle={{ paddingRight: SIZES.padding }}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
@@ -165,7 +174,7 @@ const Home = () => {
               marginTop: SIZES.padding / 2,
               width: SIZES.width * 0.5,
               borderRadius: SIZES.radius,
-              marginRight: index !== recommendedList.length - 1 ? SIZES.padding : 0,
+              marginRight: SIZES.padding,
             }} imageStyle={{ height: 150, width: 150 }}
           />
         }}
@@ -182,6 +191,11 @@ const Home = () => {
         alignItems: 'center',
       }}>
       {renderSearch()}
+
+      <FilterSearch
+        show={showFilter}
+        onClose={() => setShowFilter(false)}
+      />
 
       {/* list */}
       <FlatList
